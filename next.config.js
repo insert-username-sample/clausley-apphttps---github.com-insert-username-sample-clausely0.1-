@@ -3,16 +3,13 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // Don't bundle Node.js specific modules for the client-side and Edge environments
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        crypto: false, // This will make `crypto` resolve to an empty module
-      };
+      // Use IgnorePlugin to prevent bundling of specific modules in Edge environments
+      config.plugins.push(
+        new (require('webpack').IgnorePlugin)({
+          resourceRegExp: /^(?:@clerk\/shared\/devBrowser|crypto)$/,
+        })
+      );
     }
-      // Resolve @clerk/shared/devBrowser to false for client/Edge builds
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@clerk/shared/devBrowser': false,
-      };
     return config;
   },
 };
