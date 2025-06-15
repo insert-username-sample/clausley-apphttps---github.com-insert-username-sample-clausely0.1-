@@ -35,21 +35,21 @@ const LandingPageContent: React.FC<{ images: string[] }> = ({ images }) => {
   };
 
   return (
-    <main className="flex-grow flex flex-col items-center justify-center text-center p-4">
+    <main className="flex-grow flex flex-col lg:flex-row items-center justify-center text-center lg:text-left p-4 lg:p-8">
       {/* Image Section */}
-      <div className="w-full max-w-6xl mx-auto mb-8">
-        <Carousel images={images} containerClassName="w-2/4 mx-auto" />
+      <div className="w-full lg:w-1/2 max-w-6xl mb-7 lg:mb-0 lg:mr-8">
+        <Carousel images={images} containerClassName="w-full h-80 lg:h-96 xl:h-[500px]" />
       </div>
 
       {/* Hero Text Section */}
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">
+      <div className="space-y-6 w-full lg:w-1/2 max-w-4xl mx-auto">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white">
           AI-First Legal <span className="text-blue-600 dark:text-blue-500">Compliance</span>
         </h1>
-        <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400">
+        <p className="text-base md:text-lg lg:text-xl text-gray-500 dark:text-gray-400">
           Automate clause analysis, generate policies, and stay compliant across all jurisdictions with intelligent AI assistance.
         </p>
-        <div className="flex flex-wrap gap-3 justify-center pt-4">
+        <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-4">
           <Badge text="GDPR Ready" color="green" />
           <Badge text="CCPA Ready" color="yellow" />
           <Badge text="AI Act Compliant" color="blue" />
