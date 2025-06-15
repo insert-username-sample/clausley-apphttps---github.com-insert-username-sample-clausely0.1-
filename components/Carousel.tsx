@@ -51,8 +51,8 @@ export const Carousel: React.FC<CarouselProps> = ({ images, interval = 5000, con
           <Image
             src={images[currentIndex]}
             alt={`Carousel image ${currentIndex + 1}`}
-            layout="fill"
-            objectFit="contain"
+            fill
+            className="object-contain"
           />
         </motion.div>
       </AnimatePresence>
