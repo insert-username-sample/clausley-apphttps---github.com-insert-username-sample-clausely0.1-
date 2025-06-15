@@ -5,6 +5,9 @@ import { Providers } from "./Providers";
 export const metadata = {
   title: "Clausely",
   description: "AI-first Legal Compliance",
+  icons: {
+    icon: '/logo_clausely_c-removebg-preview.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
