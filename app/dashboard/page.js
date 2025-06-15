@@ -1,9 +1,71 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 const DashboardPage = () => {
+  const [auditProgress, setAuditProgress] = useState({
+    percentage: 0,
+    checklist: [
+      { text: 'GDPR Compliance Review', status: 'completed' },
+      { text: 'Data Mapping Complete', status: 'completed' },
+      { text: 'Privacy Policy Update', status: 'warning' },
+      { text: 'CCPA Assessment', status: 'pending' },
+    ],
+  });
+  const [displayedPercentage, setDisplayedPercentage] = useState(0);
+  const [visibleChecklistItems, setVisibleChecklistItems] = useState([]);
+  const [globalCoverage, setGlobalCoverage] = useState({
+    covered: 4,
+    partial: 12,
+    notCovered: 23,
+  });
+
+  const targetPercentage = 68;
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 1500; // milliseconds
+    const startTime = Date.now();
+
+    const animatePercentage = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      let currentPercentage;
+      if (progress < 1) {
+        currentPercentage = Math.floor(progress * targetPercentage);
+      } else {
+        currentPercentage = targetPercentage;
+      }
+      setDisplayedPercentage(currentPercentage);
+
+      if (progress < 1) {
+        requestAnimationFrame(animatePercentage);
+      } else {
+        // Sort checklist items by status for staggered animation
+        const sortedChecklist = [...auditProgress.checklist].sort((a, b) => {
+          const statusOrder = { 'completed': 1, 'warning': 2, 'pending': 3 };
+          return statusOrder[a.status] - statusOrder[b.status];
+        });
+
+        // Once percentage animation is done, start checklist animation
+        sortedChecklist.forEach((item, index) => {
+          setTimeout(() => {
+            setVisibleChecklistItems((prev) => [...prev, { ...item, visible: true }]);
+          }, index * 200); // Staggered delay
+        });
+      }
+    };
+
+    requestAnimationFrame(animatePercentage);
+  }, []);
+
+  // Calculate strokeDashoffset for the progress circle
+  const circumference = 2 * Math.PI * 40; // 2 * PI * radius (radius is 40)
+  const offset = circumference - (displayedPercentage / 100) * circumference;
+
   return (
     <DashboardLayout>
       <div className="flex-1 p-8">
@@ -18,20 +80,20 @@ const DashboardPage = () => {
               <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">Covered</span>
               <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Not Covered</span>
             </div>
-            <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-gray-500 dark:text-gray-400">
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-gray-500 dark:text-gray-400">
               Backend maps analytics integration to be implemented
             </div>
             <div className="flex justify-around mt-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-blue-600">4</p>
+                <p className="text-2xl font-bold text-blue-600">{globalCoverage.covered}</p>
                 <p className="text-gray-500 dark:text-gray-400">Covered</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-yellow-600">12</p>
+                <p className="text-2xl font-bold text-yellow-600">{globalCoverage.partial}</p>
                 <p className="text-gray-500 dark:text-gray-400">Partial</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">23</p>
+                <p className="text-2xl font-bold text-red-600">{globalCoverage.notCovered}</p>
                 <p className="text-gray-500 dark:text-gray-400">Not Covered</p>
               </div>
             </div>
@@ -47,8 +109,8 @@ const DashboardPage = () => {
                   <circle
                     className="text-blue-600 transition-all duration-500 ease-out"
                     strokeWidth="10"
-                    strokeDasharray="251.2"
-                    strokeDashoffset="60.288"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
                     strokeLinecap="round"
                     stroke="currentColor"
                     fill="transparent"
@@ -57,14 +119,23 @@ const DashboardPage = () => {
                     cy="50"
                   />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-gray-900 dark:text-white">68%</div>
+                <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-gray-900 dark:text-white">{displayedPercentage}%</div>
               </div>
             </div>
             <ul className="space-y-2">
-              <li className="flex items-center text-green-600 dark:text-green-400"><span className="mr-2">✔</span> GDPR Compliance Review</li>
-              <li className="flex items-center text-green-600 dark:text-green-400"><span className="mr-2">✔</span> Data Mapping Complete</li>
-              <li className="flex items-center text-yellow-600 dark:text-yellow-400"><span className="mr-2">▲</span> Privacy Policy Update</li>
-              <li className="flex items-center text-gray-500 dark:text-gray-400"><span className="mr-2">●</span> CCPA Assessment</li>
+              {visibleChecklistItems.map((item, index) => (
+                <li key={index} className={`flex items-center transform transition-all duration-500 ease-out ${
+                  item.status === 'completed' ? 'text-green-600 dark:text-green-400' :
+                  item.status === 'warning' ? 'text-yellow-600 dark:text-yellow-400' :
+                  'text-gray-500 dark:text-gray-400'
+                } ${item.visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-20px]'}`}>
+                  <span className="mr-2">
+                    {item.status === 'completed' ? '✔' :
+                     item.status === 'warning' ? '▲' :
+                     '●'}
+                  </span> {item.text}
+                </li>
+              ))}
             </ul>
           </div>
         </div>

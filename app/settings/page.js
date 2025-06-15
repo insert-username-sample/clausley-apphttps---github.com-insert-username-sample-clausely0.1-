@@ -1,11 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { useUser } from '@clerk/nextjs';
 
 const SettingsPage = () => {
+  const { user } = useUser();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [emailUpdatesEnabled, setEmailUpdatesEnabled] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      // You might want to fetch additional user settings from your backend/database here
+      // For now, we'll just use Clerk's user data for display
+    }
+  }, [user]);
 
   const handleSaveSettings = (e) => {
     e.preventDefault();
@@ -48,7 +57,7 @@ const SettingsPage = () => {
             <input
               type="text"
               id="username"
-              defaultValue="john.doe"
+              defaultValue={user?.username || user?.fullName || ''}
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled
             />
@@ -58,7 +67,7 @@ const SettingsPage = () => {
             <input
               type="email"
               id="email"
-              defaultValue="john.doe@example.com"
+              defaultValue={user?.primaryEmailAddress?.emailAddress || ''}
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled
             />

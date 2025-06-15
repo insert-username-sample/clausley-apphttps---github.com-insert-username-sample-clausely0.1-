@@ -1,7 +1,7 @@
 'use client';
 
 import { Toaster } from 'sonner';
-import { ThemeProvider, useTheme } from "../src/context/theme-context";
+import { ThemeProvider } from "../src/context/theme-context";
 import { LanguageProvider } from "../src/context/language-context";
 import { Provider } from 'react-redux';
 import { store } from '../src/store/store';

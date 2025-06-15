@@ -5,7 +5,7 @@ import Header from '../Header';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, projectName }) => {
   const pathname = usePathname();
 
   const navItems = [
@@ -18,12 +18,11 @@ const DashboardLayout = ({ children }) => {
     { name: 'Model Evaluation', href: '/model-evaluation', icon: '📈' },
     { name: 'Model & API Configuration', href: '/model-api-config', icon: '⚙️' },
     { name: 'TechDocs', href: '/tech-docs', icon: '📚' },
-    { name: 'Settings', href: '/settings', icon: '🔧' },
   ];
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <Header />
+      <Header projectName={projectName} />
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-gray-800 p-4 pt-6">

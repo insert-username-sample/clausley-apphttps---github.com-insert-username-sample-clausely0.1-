@@ -4,6 +4,20 @@ import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 const ProjectsPage = () => {
+  const [selectedProjectName, setSelectedProjectName] = React.useState(null);
+  const [selectedProjectId, setSelectedProjectId] = React.useState(null);
+
+  React.useEffect(() => {
+    const storedProjectId = localStorage.getItem('selectedProjectId');
+    if (storedProjectId) {
+      setSelectedProjectId(parseInt(storedProjectId));
+      const project = projects.find(p => p.id === parseInt(storedProjectId));
+      if (project) {
+        setSelectedProjectName(project.name);
+      }
+    }
+  }, []);
+
   const projects = [
     { id: 1, name: 'Clausely Compliance Engine', owner: 'Clausely', lastUpdated: '2 days ago', jurisdictions: ['EU', 'USA'], status: 'In Progress', tags: ['GDPR', 'AI Act'] },
     { id: 2, name: 'FinGuard AI', owner: 'NovaFinTech', lastUpdated: '5 days ago', jurisdictions: ['India'], status: 'Completed', tags: ['DPDP', 'Financial'] },
@@ -11,8 +25,15 @@ const ProjectsPage = () => {
     { id: 4, name: 'AgroComply Dashboard', owner: 'Clausely', lastUpdated: '10 days ago', jurisdictions: ['Africa'], status: 'Archived', tags: ['Agri', 'Privacy'] },
   ];
 
+  const handleExport = () => {
+    // For now, let's just log the projects data as a placeholder for an audit report.
+    // In a real application, this would generate a downloadable file (e.g., CSV, PDF).
+    console.log('Exporting audit report for projects:', projects);
+    alert('Export functionality is a placeholder. Check console for data.');
+  };
+
   return (
-    <DashboardLayout>
+    <DashboardLayout projectName={selectedProjectName}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Projects</h1>
         <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -64,13 +85,16 @@ const ProjectsPage = () => {
         <div className="flex justify-end space-x-2 mt-4">
           <button className="px-4 py-2 border border-gray-300 rounded-md dark:text-white">Grid View</button>
           <button className="px-4 py-2 border border-gray-300 rounded-md dark:text-white">Table View</button>
-          <button className="px-4 py-2 bg-green-500 text-white rounded-md">Export</button>
+          <button className="px-4 py-2 bg-green-500 text-white rounded-md" onClick={handleExport}>Export</button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
-          <div key={project.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 relative">
+          <div
+            key={project.id}
+            className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 relative ${selectedProjectId === project.id ? 'bg-gray-700' : ''}`}
+          >
             <div className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer">...</div>
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{project.name}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Owner: {project.owner}</p>
@@ -90,8 +114,18 @@ const ProjectsPage = () => {
               ))}
             </div>
             <div className="flex justify-end space-x-2">
+              <button
+                className="text-blue-600 hover:underline"
+                onClick={() => {
+                  setSelectedProjectName(project.name);
+                  setSelectedProjectId(project.id);
+                  localStorage.setItem('selectedProjectId', project.id.toString());
+                }}
+              >
+                Select
+              </button>
               <button className="text-blue-600 hover:underline">Edit</button>
-              <button className="text-blue-600 hover:underline">Export</button>
+              <button className="text-blue-600 hover:underline" onClick={() => console.log('Exporting project:', project.name)}>Export</button>
             </div>
           </div>
         ))}
