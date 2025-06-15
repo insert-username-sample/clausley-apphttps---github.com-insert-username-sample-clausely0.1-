@@ -5,8 +5,6 @@ export default authMiddleware({
     '/',
     '/login(.*)',
     '/signup(.*)',
-    '/legal(.*)',
-    '/tech-docs(.*)',
   ],
 });
 
